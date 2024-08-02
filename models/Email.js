@@ -14,10 +14,7 @@ const EmailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  scheduleTime: {
-    type: String,
-    required: false,
-  },
+
   attachments: {
     type: Array,
     default: [],

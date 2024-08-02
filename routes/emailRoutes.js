@@ -2,7 +2,7 @@
 const express = require("express");
 const { scheduleJob, sendRightNow } = require("../scheduler");
 const Email = require("../models/Email");
-
+require("dotenv").config();
 const router = express.Router();
 
 router.post("/schedule-email", async (req, res) => {
@@ -104,8 +104,6 @@ router.post("/send-email-now", async (req, res) => {
     res.status(500).json({ message: "Failed to send email", error });
   }
 });
-
-module.exports = router;
 
 router.delete("/scheduled-emails/:id", async (req, res) => {
   try {

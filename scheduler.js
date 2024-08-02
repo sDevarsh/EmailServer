@@ -1,19 +1,19 @@
 const cron = require("node-cron");
 const nodemailer = require("nodemailer");
-
-// Email sending function
+require("dotenv").config();
 const sendEmail = async (emailDetails) => {
   console.log("Sending email");
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
+  var transport = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
     auth: {
-      user: "shingaladevarsh1@gmail.com",
-      pass: "StarGold@2524",
+      user: process.env.userId,
+      pass: process.env.password,
     },
   });
 
   const mailOptions = {
-    from: "shingaladevarsh1@gmail.com",
+    from: process.env.email,
     to: emailDetails.recipient,
     subject: emailDetails.subject,
     text: emailDetails.body,
@@ -21,50 +21,49 @@ const sendEmail = async (emailDetails) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await transport.sendMail(mailOptions);
     console.log(`Email sent to ${emailDetails.recipient}`);
   } catch (error) {
     console.error("Error sending email:", error);
   }
 };
-
-const sendRightNow = async (emailDetails) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "shingaladevarsh2@gmail.com",
-      pass: "StarGold@123",
-    },
-  });
-
-  const mailOptions = {
-    from: "shingaladevarsh2@gmail.com",
-    to: emailDetails.recipient,
-    subject: emailDetails.subject,
-    text: emailDetails.body,
-    attachments: emailDetails.attachments || [],
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${emailDetails.recipient}`);
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
-};
-
-// Job scheduling function
 const scheduleJob = (emailDetails, scheduleTime) => {
   cron.schedule(
     scheduleTime,
     () => {
       sendEmail(emailDetails);
+      console.log(`Email sent to ${emailDetails.recipient}`);
     },
     {
       scheduled: true,
       timezone: "Asia/Kolkata",
     }
   );
+};
+
+const sendRightNow = async (emailDetails) => {
+  var transport = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: process.env.userId,
+      pass: process.env.password,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.email,
+    to: emailDetails.recipient,
+    subject: emailDetails.subject,
+    text: emailDetails.body,
+    attachments: emailDetails.attachments || [],
+  };
+  try {
+    await transport.sendMail(mailOptions);
+    console.log(`Email sent to ${emailDetails.recipient}`);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
 };
 
 module.exports = { scheduleJob, sendRightNow };
